@@ -38,21 +38,11 @@ export class UsersController {
     }
   }
 
-  // // get me(user oz profilini kora oladi)
+  // get me(user oz profilini kora oladi)
   @UseGuards(JwtAuthGuard)
   @Get('me')
   findOne(@Request() req: any) {
     const id: User = req.user.sub
     return this.usersService.findOne(+id);
   }
-
-  // @Patch('update/:id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
-
-  // @Delete('delete/:id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
 }

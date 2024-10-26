@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { User } from "src/auth/entities/users.entity"
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm"
 
 export enum Level {
     BEGINNER = "beginner",
@@ -26,4 +27,7 @@ export class Course {
 
     @Column({ type: "enum", enum: Level, default: Level.BEGINNER })
     level: Level
+
+    @ManyToMany(() => User, user => user.courses)
+    users: User[];
 }

@@ -4,6 +4,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard';
 import { User } from 'src/auth/entities/users.entity';
 import { CreateCourseDto } from './dto/create-course.dto';
+import { CreateAddCourseToUserDto } from './dto/create-addCourseToUser.dto';
 
 @Controller('courses')
 export class CoursesController {
@@ -40,5 +41,10 @@ export class CoursesController {
   @Get('category/:category')
   findCoursesByCategories(@Param('category') category: string) {
     return this.coursesService.findCoursesByCategories(category);
+  }
+
+  @Post('add-user')
+  addCourseToUser(@Body() createAddCourseToUserDto: CreateAddCourseToUserDto) {
+    return this.coursesService.addCourseToUser(createAddCourseToUserDto)
   }
 }

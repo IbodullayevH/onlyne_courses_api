@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Course } from 'src/courses/entities/course.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 
 export enum UserRole {
     USER = "user",
@@ -26,4 +27,8 @@ export class User {
     })
     role: UserRole
 
+    @ManyToMany(() => Course, course => course.users)
+    @JoinTable() 
+    courses: Course[];
 }
+
