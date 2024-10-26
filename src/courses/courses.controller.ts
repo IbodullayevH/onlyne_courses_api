@@ -36,4 +36,9 @@ export class CoursesController {
     const user: User = req.user
     return this.coursesService.remove(+id, user);
   }
+
+  @Get('category/:category')
+  findCoursesByCategories(@Param('category') category: string) {
+    return this.coursesService.findCoursesByCategories(category);
+  }
 }

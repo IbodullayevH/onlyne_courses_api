@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -115,6 +115,32 @@ export class CoursesService {
       await this.courseRepo.delete(id)
       return {
         message: `Kurs muvaffaqiyatli o'chirildi`,
+      }
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  // get courses by categories
+  async findCoursesByCategories(category: string) {
+    try {
+
+      category = category.toLowerCase()
+      const coursesData = await this.courseRepo
+        .createQueryBuilder('courses')
+        .where(`lower(courses.category) LIKE :category`, { category: `${category}%` })
+        .getMany();
+  
+      if (!coursesData || coursesData.length === 0) {
+        throw new NotFoundException(`${category} - kategoriyasidagi kurs mavjud emas`);
+      }
+
+      return {
+        message: `${coursesData.map(el => el.category)} - kategoriyasidagi kurslar`,
+        data: coursesData
       }
     } catch (error) {
       if (error instanceof HttpException) {
