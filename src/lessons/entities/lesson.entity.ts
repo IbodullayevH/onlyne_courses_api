@@ -11,7 +11,7 @@ export class Lesson {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 255, nullable: false })
+    @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
     title: string;
 
     @Column({ type: 'text', nullable: true })
@@ -21,7 +21,11 @@ export class Lesson {
     type: LessonType;
 
     @Column({ type: 'varchar', length: 500, nullable: true })
-    videoUrl?: string; 
+    videoUrl?: string;
+
+    @Column({ type: 'int', nullable: false })
+    moduleId: number;
+
 
     @ManyToOne(() => Modules, (module) => module.lessons, { onDelete: 'CASCADE' })
     module: Modules;

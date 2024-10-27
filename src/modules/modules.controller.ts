@@ -1,3 +1,4 @@
+import { LessonsService } from './../lessons/lessons.service';
 import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards } from '@nestjs/common';
 import { ModulesService } from './modules.service';
 import { CreateModuleDto } from './dto/create-module.dto';
@@ -14,6 +15,11 @@ export class ModulesController {
   create(@Body() createModuleDto: CreateModuleDto, @Request() req: any) {
     const user: User = req.user
     return this.modulesService.create(createModuleDto, user);
+  }
+
+  @Get(':moduleId/lessons')
+  findAll(@Param('moduleId') moduleId: string) {
+    return this.modulesService.findModulesLessons(+moduleId);
   }
 
   @UseGuards(JwtAuthGuard)

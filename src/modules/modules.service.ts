@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Get, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
 import { User, UserRole } from 'src/auth/entities/users.entity';
@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Modules } from './entities/module.entity';
 import { Course } from 'src/courses/entities/course.entity';
+import { Lesson } from 'src/lessons/entities/lesson.entity';
 
 @Injectable()
 export class ModulesService {
@@ -53,6 +54,24 @@ export class ModulesService {
     }
   }
 
+  async findModulesLessons(moduleId:number): Promise<object> {
+    try {
+      const moduleData = await this.moduleRepo.findOne({
+        where:{id: moduleId},
+        relations:['lessons']
+      });
+
+      return {
+        message: "Success",
+        data: moduleData && moduleData.lessons.length > 0 ? moduleData.lessons : [],
+      } 
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   // update
   async update(id: number, updateModuleDto: UpdateModuleDto, user: User): Promise<object> {
@@ -94,6 +113,8 @@ export class ModulesService {
     }
   }
 
+
+  // remove
   async remove(id: number, user: User): Promise<object> {
     try {
       if (user.role !== UserRole.ADMIN) {
