@@ -9,6 +9,8 @@ import { Course } from 'src/courses/entities/course.entity';
 import { CoursesModule } from 'src/courses/courses.module';
 import { ModulesModule } from 'src/modules/modules.module';
 import { Modules } from 'src/modules/entities/module.entity';
+import { Lesson } from 'src/lessons/entities/lesson.entity';
+import { LessonsModule } from 'src/lessons/lessons.module';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { Modules } from 'src/modules/entities/module.entity';
       useFactory: async (configService: ConfigService) => ({
         type: "postgres",
         url: configService.get("DB_URL"),
-        entities: [User, Course, Modules],
+        entities: [User, Course, Modules, Lesson],
         synchronize: true,
         // logging: true
       }),
@@ -28,7 +30,8 @@ import { Modules } from 'src/modules/entities/module.entity';
     }),
     UsersModule,
     CoursesModule,
-    ModulesModule
+    ModulesModule,
+    LessonsModule
   ],
   controllers: [AppController],
   providers: [AppService],
