@@ -1,5 +1,6 @@
 import { User } from "src/auth/entities/users.entity"
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Modules } from "src/modules/entities/module.entity"
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 
 export enum Level {
     BEGINNER = "beginner",
@@ -30,4 +31,8 @@ export class Course {
 
     @ManyToMany(() => User, user => user.courses)
     users: User[];
+
+    @OneToMany(() => Modules, (module) => module.course, { cascade: true })
+    modules: Modules[];
+
 }

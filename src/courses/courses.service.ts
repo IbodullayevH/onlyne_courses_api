@@ -6,6 +6,7 @@ import { Course } from './entities/course.entity';
 import { Repository } from 'typeorm';
 import { User, UserRole } from 'src/auth/entities/users.entity';
 import { CreateAddCourseToUserDto } from './dto/create-addCourseToUser.dto';
+import { Modules } from 'src/modules/entities/module.entity';
 
 @Injectable()
 export class CoursesService {
@@ -15,7 +16,10 @@ export class CoursesService {
     private readonly userRepo: Repository<User>,
 
     @InjectRepository(Course)
-    private readonly courseRepo: Repository<Course>
+    private readonly courseRepo: Repository<Course>,
+
+    @InjectRepository(Modules)
+    private readonly moduleRepo: Repository<Modules>,
   ) { }
 
   // new course
@@ -50,7 +54,7 @@ export class CoursesService {
   async findAll() {
     try {
       const coursesData = await this.courseRepo.find({
-        relations: ['users']
+        relations: ['users', 'modules']
       })
 
       return {
@@ -171,8 +175,34 @@ export class CoursesService {
         throw new NotFoundException('Foydalanuvchi yoki kurs topilmadi');
       }
       course.users.push(user);
-      const newAddCourseToUser = await this.courseRepo.save(course);
-      return {message:`Siz ${course.name} kursiga muvaffaqiyatli yozildingiz`}
+      await this.courseRepo.save(course);
+      return { message: `Siz ${course.name} kursiga muvaffaqiyatli yozildingiz` }
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
+  // Kursdagi barcha modullarni ko'rish
+  async ViewAllModulesInTheCourse(courseId: number): Promise<object> {
+    try {
+      const courseData = await this.courseRepo.findOne({ where: { id: courseId }, relations: ['modules'] })
+      if (!courseData) {
+        throw new NotFoundException('Siz izlayotgan kurs mavjud emas')
+      }
+
+      const moduleData = courseData.modules
+      if (moduleData.length === 0) {
+        throw new NotFoundException(`${courseData.name} kursining modullari mavjud emas`)
+      }
+
+      return {
+        message: `Modules data`,
+        data: moduleData
+      }
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

@@ -19,9 +19,24 @@ export class CoursesController {
     return this.coursesService.create(createCourseDto, user);
   }
 
+  @Post('add-user')
+  addCourseToUser(@Body() createAddCourseToUserDto: CreateAddCourseToUserDto) {
+    return this.coursesService.addCourseToUser(createAddCourseToUserDto)
+  }
+
   @Get()
   findAll() {
     return this.coursesService.findAll();
+  }
+
+  @Get('category/:category')
+  findCoursesByCategories(@Param('category') category: string) {
+    return this.coursesService.findCoursesByCategories(category);
+  }
+
+  @Get(':courseId/modules')
+  ViewAllModulesInTheCourse(@Param('courseId') courseId: number) {
+    return this.coursesService.ViewAllModulesInTheCourse(courseId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -36,15 +51,5 @@ export class CoursesController {
   remove(@Param('id') id: string, @Request() req: any) {
     const user: User = req.user
     return this.coursesService.remove(+id, user);
-  }
-
-  @Get('category/:category')
-  findCoursesByCategories(@Param('category') category: string) {
-    return this.coursesService.findCoursesByCategories(category);
-  }
-
-  @Post('add-user')
-  addCourseToUser(@Body() createAddCourseToUserDto: CreateAddCourseToUserDto) {
-    return this.coursesService.addCourseToUser(createAddCourseToUserDto)
   }
 }
