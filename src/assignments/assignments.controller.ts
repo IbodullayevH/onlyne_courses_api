@@ -16,23 +16,24 @@ export class AssignmentsController {
     return this.assignmentsService.create(createAssignmentDto, user);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.assignmentsService.findAll();
+  findAll(@Request() req: any) {
+    const user: User = req.user
+    return this.assignmentsService.findAll(user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.assignmentsService.findOne(+id);
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAssignmentDto: UpdateAssignmentDto) {
-    return this.assignmentsService.update(+id, updateAssignmentDto);
+  update(@Param('id') id: string, @Body() updateAssignmentDto: UpdateAssignmentDto, @Request() req: any) {
+    const user: User = req.user
+    return this.assignmentsService.update(+id, updateAssignmentDto, user);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assignmentsService.remove(+id);
+  remove(@Param('id') id: string, @Request() req: any) {
+    const user: User = req.user
+    return this.assignmentsService.remove(+id, user);
   }
 }

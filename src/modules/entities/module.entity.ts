@@ -21,6 +21,6 @@ export class Modules {
     lessons: Lesson[];
 
     @OneToMany(() => Assignment, (assignment) => assignment.module)
-    assignments: Assignment
+    assignments: Assignment[];
 }
 
