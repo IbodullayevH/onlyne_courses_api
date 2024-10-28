@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException, ConflictException, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, ConflictException, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Lesson } from './entities/lesson.entity';
@@ -17,7 +17,7 @@ export class LessonsService {
     private readonly moduleRepo: Repository<Modules>
   ) { }
 
-  // create mo00dul0e0
+  // create module
   async create(createLessonDto: CreateLessonDto, user: User): Promise<object> {
     try {
       if (user.role !== UserRole.ADMIN) {
@@ -37,7 +37,7 @@ export class LessonsService {
 
       const lesson = this.lessonRepo.create(createLessonDto);
       return {
-        message: `'${lesson.title}' - darsi <u>${module.module_name}</u> moduliga qoshildi`,
+        message: `'${lesson.title}' - darsi '${module.module_name}' moduliga qoshildi`,
         data: await this.lessonRepo.save(lesson)
       }
     } catch (error) {
@@ -52,30 +52,55 @@ export class LessonsService {
     return await this.lessonRepo.find();
   }
 
-  async findOne(id: number): Promise<Lesson> {
-    const lesson = await this.lessonRepo.findOne({ where: { id } });
-    if (!lesson) {
-      throw new NotFoundException(`Dars #${id} topilmadi`);
+
+  // update lesson
+  async update(id: number, updateLessonDto: UpdateLessonDto, user: User): Promise<object> {
+    try {
+      if (user.role !== UserRole.ADMIN) {
+        throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
+      }
+
+      const hasValidField = Object.values(updateLessonDto).some(value => value !== undefined);
+      if (!hasValidField) {
+        throw new BadRequestException({
+          message: `Yangilash uchun kamida bitta maydon to'ldirilishi kerak`,
+        });
+      }
+
+      const lesson = await this.lessonRepo.findOneBy({ id })
+      if (!lesson) {
+        throw new ConflictException('Bu Lessson mavjud emas')
+      }
+
+      const chekingForDuplicateValue = await this.lessonRepo.findOne({ where: { title: updateLessonDto.title } })
+
+      if (chekingForDuplicateValue?.title == updateLessonDto.title) {
+        throw new ConflictException(`Siz yangilash uchun kiritayotgan '${updateLessonDto.title}' lessson nomi allaqachon boshqa lesssonda mavjud! Boshqa nom kiriting`)
+      }
+
+      await this.lessonRepo.update(id, updateLessonDto)
+      const updatedlesson = await this.lessonRepo.findOneBy({ id })
+
+      return {
+        message: `Lessson malumotlari muvaffaqiyatli yangilandi`,
+        data: updatedlesson
+      }
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-    return lesson;
   }
 
-  async update(id: number, updateLessonDto: UpdateLessonDto, user: User): Promise<Lesson> {
-    if (user.role !== UserRole.ADMIN) {
-      throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
-    }
 
-    const lesson = await this.findOne(id);
-    Object.assign(lesson, updateLessonDto);
-    return await this.lessonRepo.save(lesson);
-  }
-
+  // delete lesson
   async remove(id: number, user: User): Promise<{ message: string }> {
     if (user.role !== UserRole.ADMIN) {
       throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
     }
 
-    const lesson = await this.findOne(id);
+    const lesson = await this.lessonRepo.findOneBy({ id })
     await this.lessonRepo.remove(lesson);
     return { message: `Dars #${id} muvaffaqiyatli o'chirildi` };
   }

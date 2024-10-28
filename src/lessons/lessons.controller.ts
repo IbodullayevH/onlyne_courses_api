@@ -22,11 +22,6 @@ export class LessonsController {
   }
 
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.lessonsService.findOne(+id);
-  }
-
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateLessonDto: UpdateLessonDto, @Request() req: any) {
