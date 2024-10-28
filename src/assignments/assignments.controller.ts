@@ -1,15 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { AssignmentsService } from './assignments.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard';
+import { User } from 'src/auth/entities/users.entity';
 
 @Controller('assignments')
 export class AssignmentsController {
-  constructor(private readonly assignmentsService: AssignmentsService) {}
+  constructor(private readonly assignmentsService: AssignmentsService) { }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createAssignmentDto: CreateAssignmentDto) {
-    return this.assignmentsService.create(createAssignmentDto);
+  create(@Body() createAssignmentDto: CreateAssignmentDto, @Request() req: any) {
+    const user: User = req.user
+    return this.assignmentsService.create(createAssignmentDto, user);
   }
 
   @Get()

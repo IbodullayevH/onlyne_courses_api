@@ -173,7 +173,7 @@ export class CoursesService {
       }
       course.users.push(user);
       await this.courseRepo.save(course);
-      return { message: `Siz ${course.name} kursiga muvaffaqiyatli yozildingiz` }
+      return { message: `${user.name} siz ${course.name} - kursiga muvaffaqiyatli yozildingiz` }
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

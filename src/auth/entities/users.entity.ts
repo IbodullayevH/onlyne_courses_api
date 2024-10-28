@@ -1,5 +1,6 @@
 import { Course } from 'src/courses/entities/course.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Result } from 'src/results/entities/result.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 
 export enum UserRole {
     USER = "user",
@@ -28,7 +29,10 @@ export class User {
     role: UserRole
 
     @ManyToMany(() => Course, course => course.users)
-    @JoinTable() 
+    @JoinTable()
     courses: Course[];
+
+    @OneToMany(() => Result, (result) => result.user)
+    results: Result[];
 }
 

@@ -1,5 +1,5 @@
 
-1
+1.
 Loyiha nomi: Online Kurslarni Boshqarish Tizimi
 Texnik topshiriq:
 Sizga Online Kurslarni Boshqarish Tizimi yaratish kerak. Ushbu tizim
