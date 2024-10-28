@@ -7,10 +7,11 @@ import { Modules } from 'src/modules/entities/module.entity';
 import { Result } from 'src/results/entities/result.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { User } from 'src/auth/entities/users.entity';
+import { Submittion } from 'src/submittion/entities/submittion.entity';
 
 @Module({
 
-  imports: [TypeOrmModule.forFeature([Assignment, Modules, Result, User]),
+  imports: [TypeOrmModule.forFeature([Assignment, Modules, Result, User, Submittion]),
     AuthModule
   ],
   controllers: [AssignmentsController],

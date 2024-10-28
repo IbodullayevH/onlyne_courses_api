@@ -138,39 +138,5 @@ export class ModulesService {
     }
   }
 
-  // topshiriqni topshirish
-  async AssignmentSubmission(createModuleDto: CreateModuleDto, user: User): Promise<object> {
-    try {
-      if (user.role !== UserRole.ADMIN) {
-        throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
-      }
-      const existModule = await this.moduleRepo.findOne({ where: { module_name: createModuleDto.module_name } })
-      if (existModule) {
-        throw new ConflictException('Bu module allaqachon mavjud')
-      }
-
-      const course = await this.courseRepo.findOne({
-        where: {
-          id: createModuleDto.courseId
-        }
-      })
-      if (!course) {
-        throw new NotFoundException(`${createModuleDto.courseId} - idlik course yoq`)
-      }
-
-      let newModule = this.moduleRepo.create(createModuleDto)
-      const savedModule = await this.moduleRepo.save(newModule)
-
-      return {
-        message: `Yangi module muvaffaqiyatli yaratildi`,
-        data: savedModule
-      }
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
 
 }
