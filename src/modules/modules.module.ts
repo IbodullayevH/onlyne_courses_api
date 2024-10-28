@@ -6,12 +6,13 @@ import { Modules } from './entities/module.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { Course } from 'src/courses/entities/course.entity';
 import { Lesson } from 'src/lessons/entities/lesson.entity';
+import { Assignment } from 'src/assignments/entities/assignment.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Modules, Course,Lesson]),
+  imports: [TypeOrmModule.forFeature([Modules, Course, Lesson, Assignment]),
     AuthModule
   ],
   controllers: [ModulesController],
   providers: [ModulesService],
 })
-export class ModulesModule {}
+export class ModulesModule { }

@@ -9,10 +9,16 @@ export class Result {
   id: number;
 
   @Column({ type: 'float', nullable: true })
-  score: number; // Baholash natijasi
+  score: number;
 
   @Column({ type: 'text', nullable: true })
   feedback: string;
+
+  @Column({ type: 'int', nullable: false })
+  userId: number;
+
+  @Column({ type: 'int', nullable: false })
+  assignmentId: number;
 
   @ManyToOne(() => Assignment, (assignment) => assignment.results, { onDelete: 'CASCADE' })
   assignment: Assignment;
