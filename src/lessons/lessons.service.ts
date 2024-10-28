@@ -24,15 +24,14 @@ export class LessonsService {
         throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
       }
 
-      const module = await this.moduleRepo.findOne({ where: { id: createLessonDto.moduleId } })
+      const module = await this.moduleRepo.findOne({ where: { id: createLessonDto.moduleId }, relations: ["lessons"] })
       if (!module) {
         throw new NotFoundException(`Modul mavjud emas`)
       }
 
-      const existLesson = await this.lessonRepo.findOne({ where: { title: createLessonDto.title } })
-      if (existLesson) {
+      if (module.lessons.filter(el => el.title == createLessonDto.title).length > 0) {
         throw new ConflictException(
-          `${module.module_name} moduliga '${existLesson?.title}' darsi avval qoshilgan`)
+          `${module.module_name} - moduliga '${createLessonDto?.title}' darsi avval qoshilgan`)
       }
 
       const lesson = this.lessonRepo.create(createLessonDto);
@@ -95,13 +94,24 @@ export class LessonsService {
 
 
   // delete lesson
-  async remove(id: number, user: User): Promise<{ message: string }> {
-    if (user.role !== UserRole.ADMIN) {
-      throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
-    }
+  async remove(id: number, user: User): Promise<object> {
+    try {
+      if (user.role !== UserRole.ADMIN) {
+        throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
+      }
 
-    const lesson = await this.lessonRepo.findOneBy({ id })
-    await this.lessonRepo.remove(lesson);
-    return { message: `Dars #${id} muvaffaqiyatli o'chirildi` };
+      const lesson = await this.lessonRepo.findOneBy({ id })
+      if (!lesson) {
+        throw new NotFoundException()
+      }
+
+      await this.lessonRepo.remove(lesson);
+      return { message: `Dars #${id} muvaffaqiyatli o'chirildi` };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

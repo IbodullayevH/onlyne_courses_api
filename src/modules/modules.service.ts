@@ -63,7 +63,7 @@ export class ModulesService {
 
       return {
         message: "Success",
-        data: moduleData && moduleData.lessons.length > 0 ? moduleData.lessons : [],
+        data: moduleData 
       } 
     } catch (error) {
       if (error instanceof HttpException) {
