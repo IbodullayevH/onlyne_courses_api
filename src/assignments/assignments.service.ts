@@ -38,6 +38,7 @@ export class AssignmentsService {
 
       let assignment = this.assignmentRepo.create(createAssignmentDto)
       const newAssignment = await this.assignmentRepo.save(assignment)
+      
       return {
         message: 'New assignment created',
         data: newAssignment
