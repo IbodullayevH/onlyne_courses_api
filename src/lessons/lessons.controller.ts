@@ -18,9 +18,8 @@ export class LessonsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll(@Request() req: any) {
-    const user: User = req.user
-    return this.lessonsService.findAll(user);
+  findAll() {
+    return this.lessonsService.findAll();
   }
 
 

@@ -3,7 +3,7 @@ import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Assignment } from './entities/assignment.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Modules } from 'src/modules/entities/module.entity';
 import { User, UserRole } from 'src/auth/entities/users.entity';
 
@@ -15,7 +15,10 @@ export class AssignmentsService {
     private readonly assignmentRepo: Repository<Assignment>,
 
     @InjectRepository(Modules)
-    private readonly moduleRepo: Repository<Modules>
+    private readonly moduleRepo: Repository<Modules>,
+
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>
 
   ) { }
 
@@ -32,13 +35,13 @@ export class AssignmentsService {
         throw new NotFoundException(`#${createAssignmentDto.moduleId} - idlik modul yo'q`)
       }
 
-      if (module.assignments.map(el => el.description === createAssignmentDto.description).length > 0) {
+      if (module.assignments.filter(el => el.description === createAssignmentDto.description).length > 0) {
         throw new ConflictException(`Siz ushbu assignmentni avval ${module.module_name} - moduliga qoshgansiz.`)
       }
 
       let assignment = this.assignmentRepo.create(createAssignmentDto)
       const newAssignment = await this.assignmentRepo.save(assignment)
-      
+
       return {
         message: 'New assignment created',
         data: newAssignment
@@ -52,21 +55,32 @@ export class AssignmentsService {
     }
   }
 
-
-  async findAll(user: User): Promise<Assignment[]> {
+  // user faqat o'zi yozilgan kurs modullarining topshiriqlarini ko'ra oladi
+  async findAll(user: any): Promise<object> {
     try {
-      if (user.role !== UserRole.ADMIN) {
-        throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
+      const userData = await this.userRepo.findOne({
+        where: { id: user.sub },
+        relations: ["courses", "courses.modules"]
+      });
+      const moduleIds = userData.courses.flatMap(course => course.modules.map(module => module.id));
+
+      const assignments = await this.assignmentRepo.find({
+        where: { moduleId: In(moduleIds) }
+      });
+
+      return {
+        message: `Sizni ${userData.courses[0].name} - kursingizni modullaridagi topshiriqlar`,
+        assignments: assignments
       }
 
-      return await this.assignmentRepo.find()
     } catch (error) {
       if (error instanceof HttpException) {
-        throw error
+        throw error;
       }
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
 
 
   // update assignment
@@ -96,7 +110,7 @@ export class AssignmentsService {
       }
 
       await this.assignmentRepo.update(id, updateAssignmentDto)
-      const updatedAssignment = await this.assignmentRepo.findOneBy({id})
+      const updatedAssignment = await this.assignmentRepo.findOneBy({ id })
 
       return {
         message: `Assignment #${id} yangilandi`,
@@ -114,7 +128,7 @@ export class AssignmentsService {
   // remove assignment
   async remove(id: number, user: User): Promise<object> {
     try {
-      
+
       if (user.role !== UserRole.ADMIN) {
         throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
       }

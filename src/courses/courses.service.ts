@@ -160,9 +160,8 @@ export class CoursesService {
   }
 
   // add Course  To User
-  async addCourseToUser(createAddCourseToUserDto: CreateAddCourseToUserDto): Promise<object> {
+  async addCourseToUser(createAddCourseToUserDto: CreateAddCourseToUserDto, user:User): Promise<object> {
     try {
-      const user = await this.userRepo.findOne({ where: { id: createAddCourseToUserDto.userId } });
       const course = await this.courseRepo.findOne({
         where: { id: createAddCourseToUserDto.courseId },
         relations: ['users']
@@ -173,7 +172,7 @@ export class CoursesService {
       }
       course.users.push(user);
       await this.courseRepo.save(course);
-      return { message: `${user.name} siz ${course.name} - kursiga muvaffaqiyatli yozildingiz` }
+      return { message: `Siz ${course.name} - kursiga muvaffaqiyatli yozildingiz` }
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

@@ -5,10 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Submittion } from './entities/submittion.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { Assignment } from 'src/assignments/entities/assignment.entity';
-import { Result } from 'src/results/entities/result.entity';
+import { User } from 'src/auth/entities/users.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Submittion, Assignment, Result]),
+  imports: [TypeOrmModule.forFeature([Submittion, Assignment, User]),
     AuthModule],
   controllers: [SubmittionController],
   providers: [SubmittionService],

@@ -15,11 +15,8 @@ export class Submittion {
     @Column({ type: "int", nullable: false })
     assignmentId: number
 
-    @Column({ type: "int", nullable: false })
-    resultId: number
-
     @Column({ type: "text", nullable: true })
-    assignmentText: string
+    answer: string
 
     @ManyToOne(() => User, (user) => user.submittion)
     user: User

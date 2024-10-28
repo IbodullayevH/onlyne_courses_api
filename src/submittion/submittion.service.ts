@@ -1,26 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateSubmittionDto } from './dto/create-submittion.dto';
-import { UpdateSubmittionDto } from './dto/update-submittion.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from 'src/auth/entities/users.entity';
+import { Assignment } from 'src/assignments/entities/assignment.entity';
+import { Submittion } from './entities/submittion.entity';
 
 @Injectable()
 export class SubmittionService {
-  create(createSubmittionDto: CreateSubmittionDto) {
-    return 'This action adds a new submittion';
-  }
 
-  findAll() {
-    return `This action returns all submittion`;
-  }
+  constructor(
+    @InjectRepository(Assignment)
+    private readonly assignmentRepo: Repository<Assignment>,
 
-  findOne(id: number) {
-    return `This action returns a #${id} submittion`;
-  }
+    @InjectRepository(Submittion)
+    private readonly submittionRepo: Repository<Submittion>
+  ) { }
 
-  update(id: number, updateSubmittionDto: UpdateSubmittionDto) {
-    return `This action updates a #${id} submittion`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} submittion`;
+  // Topshiriqni topshirish
+  async create(createSubmittionDto: CreateSubmittionDto, user: any): Promise<object> {
+
+    const { assignmentId, answer } = createSubmittionDto;
+
+    const assignment = await this.assignmentRepo.findOne({ where: { id: assignmentId } });
+    if (!assignment) {
+      throw new NotFoundException(`Topshiriq topilmadi`);
+    }
+
+    // Yangi Submittion obyektini yaratish
+    const submittion = this.submittionRepo.create({
+      answer,
+      userId: user.sub,
+      assignment
+    });
+
+    return await this.submittionRepo.save(submittion);
   }
 }
