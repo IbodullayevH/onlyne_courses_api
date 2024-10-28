@@ -47,7 +47,12 @@ export class LessonsService {
     }
   }
 
-  async findAll(): Promise<Lesson[]> {
+  // get lessons
+  async findAll(user: User): Promise<Lesson[]> {
+    if (user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
+    }
+    
     return await this.lessonRepo.find();
   }
 
