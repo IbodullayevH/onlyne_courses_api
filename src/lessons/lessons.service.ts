@@ -37,7 +37,7 @@ export class LessonsService {
 
       const lesson = this.lessonRepo.create(createLessonDto);
       return {
-        message: `${existLesson?.title} dars ${module.module_name} moduliga qoshildi`,
+        message: `'${lesson.title}' - darsi <u>${module.module_name}</u> moduliga qoshildi`,
         data: await this.lessonRepo.save(lesson)
       }
     } catch (error) {

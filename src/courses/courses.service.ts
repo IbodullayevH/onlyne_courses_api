@@ -16,10 +16,7 @@ export class CoursesService {
     private readonly userRepo: Repository<User>,
 
     @InjectRepository(Course)
-    private readonly courseRepo: Repository<Course>,
-
-    @InjectRepository(Modules)
-    private readonly moduleRepo: Repository<Modules>,
+    private readonly courseRepo: Repository<Course>
   ) { }
 
   // new course
