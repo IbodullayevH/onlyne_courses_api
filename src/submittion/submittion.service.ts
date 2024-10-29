@@ -32,7 +32,6 @@ export class SubmittionService {
       userId: user.sub,
       assignment
     });
-
     return await this.submittionRepo.save(submittion);
   }
 }

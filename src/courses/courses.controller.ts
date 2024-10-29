@@ -23,7 +23,7 @@ export class CoursesController {
   @UseGuards(JwtAuthGuard)
   @Post('add-user')
   addCourseToUser(@Body() createAddCourseToUserDto: CreateAddCourseToUserDto,  @Request() req: any) {
-    const user: User = req.user
+    const user: User = req.user    
     return this.coursesService.addCourseToUser(createAddCourseToUserDto, user)
   }
 

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  nest-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${SERVER_PORT:-3000}:3000"
+    environment:
+      - DB_URL=postgres://postgres:8077@postgres-db:5432/exam_8
+    depends_on:
+      - postgres-db
+    restart: always
+
+  postgres-db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=exam_8
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=8077
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres-data:

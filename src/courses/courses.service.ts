@@ -159,20 +159,36 @@ export class CoursesService {
     }
   }
 
-  // add Course  To User
-  async addCourseToUser(createAddCourseToUserDto: CreateAddCourseToUserDto, user:User): Promise<object> {
+  // addCourseToUser - logikasi
+  async addCourseToUser(createAddCourseToUserDto: CreateAddCourseToUserDto, user: any): Promise<object> {
     try {
+      // Kursni olish (bog'langan foydalanuvchilar bilan birga)
       const course = await this.courseRepo.findOne({
         where: { id: createAddCourseToUserDto.courseId },
         relations: ['users']
       });
+      const userId = user.sub
+      const userData = await this.userRepo.findOne({
+        where: { id: userId }
+      });
 
-      if (!user || !course) {
+      if (!userData || !course) {
         throw new NotFoundException('Foydalanuvchi yoki kurs topilmadi');
       }
-      course.users.push(user);
+      console.log(course.users.find(el => el.id == user.sub));
+      
+      course.users.push(userData);
       await this.courseRepo.save(course);
-      return { message: `Siz ${course.name} - kursiga muvaffaqiyatli yozildingiz` }
+
+      const courseDataWithoutPasswords = {
+        ...course,
+        users: course.users.map(({ password, ...userWithoutPassword }) => userWithoutPassword)
+      };
+
+      return {
+        message: `${user.name} siz ${course.name} kursiga muvaffaqiyatli yozildingiz`,
+        data: courseDataWithoutPasswords
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -180,6 +196,7 @@ export class CoursesService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
 
 
   // Kursdagi barcha modullarni ko'rish

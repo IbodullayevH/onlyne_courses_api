@@ -8,15 +8,16 @@ import { User } from '../auth/entities/users.entity';
 import { UsersService } from './users.service';
 import { Result } from 'src/results/entities/result.entity';
 import { Submittion } from 'src/submittion/entities/submittion.entity';
+import { Course } from 'src/courses/entities/course.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Result, Submittion]),
+    TypeOrmModule.forFeature([User, Result, Submittion, Course]),
     forwardRef(() => AppModule),
-    AuthModule
+    forwardRef(() => AuthModule)
   ],
   controllers: [UsersController],
   providers: [UsersService, AuthService],
-  exports: [UsersService]
+  exports: [UsersService, TypeOrmModule]
 })
 export class UsersModule { }
