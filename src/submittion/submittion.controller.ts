@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { SubmittionService } from './submittion.service';
 import { CreateSubmittionDto } from './dto/create-submittion.dto';
-import { UpdateSubmittionDto } from './dto/update-submittion.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard';
 import { User } from 'src/auth/entities/users.entity';
 
@@ -11,7 +10,7 @@ export class SubmittionController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createSubmittionDto: CreateSubmittionDto,  @Request() req: any) {
+  create(@Body() createSubmittionDto: CreateSubmittionDto, @Request() req: any) {
     const user: User = req.user
     return this.submittionService.create(createSubmittionDto, user);
   }

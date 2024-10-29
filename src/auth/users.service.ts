@@ -34,7 +34,7 @@ export class UsersService {
       }
 
       let newUser = this.userRepo.create(createUserDto)
-      
+
       const user = await this.userRepo.save(newUser);
       const { password, ...result } = user
 
@@ -58,9 +58,8 @@ export class UsersService {
         throw new ForbiddenException("Foydalanuvchida ushbu amallarni bajarish huquqi yo'q");
       }
       const usersData = await this.userRepo.find({
-        relations:['courses']
-      }
-      )
+        relations: ['courses']
+      })
 
       return {
         message: 'Users data',
@@ -81,7 +80,7 @@ export class UsersService {
     try {
 
       const userData = await this.userRepo.findOne({
-        relations:['courses'],
+        relations: ['courses'],
         where: { id: id }
       })
       if (!userData) {

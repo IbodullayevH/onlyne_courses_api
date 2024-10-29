@@ -175,7 +175,6 @@ export class CoursesService {
       if (!userData || !course) {
         throw new NotFoundException('Foydalanuvchi yoki kurs topilmadi');
       }
-      console.log(course.users.find(el => el.id == user.sub));
       
       course.users.push(userData);
       await this.courseRepo.save(course);

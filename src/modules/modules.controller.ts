@@ -17,8 +17,9 @@ export class ModulesController {
     return this.modulesService.create(createModuleDto, user);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':moduleId/lessons')
-  findAll(@Param('moduleId') moduleId: string) {
+  findAll(@Param('moduleId') moduleId: string,) {
     return this.modulesService.findModulesLessons(+moduleId);
   }
 

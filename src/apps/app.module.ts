@@ -28,7 +28,7 @@ import { SubmittionModule } from 'src/submittion/submittion.module';
         type: "postgres",
         url: configService.get("DB_URL"),
         entities: [User, Course, Modules, Lesson, Assignment, Result, Submittion],
-        synchronize: false,
+        synchronize: true,
         // logging: true
       }),
 

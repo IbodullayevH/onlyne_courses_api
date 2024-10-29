@@ -63,7 +63,7 @@ export class ModulesService {
 
       return {
         message: "Success",
-        data: moduleData 
+        data: moduleData
       } 
     } catch (error) {
       if (error instanceof HttpException) {
