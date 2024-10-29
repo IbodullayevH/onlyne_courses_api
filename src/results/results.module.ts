@@ -6,9 +6,10 @@ import { Result } from './entities/result.entity';
 import { Assignment } from 'src/assignments/entities/assignment.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { Submittion } from 'src/submittion/entities/submittion.entity';
+import { User } from 'src/auth/entities/users.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Result, Assignment, Submittion]),
+  imports: [TypeOrmModule.forFeature([Result, Assignment, Submittion, User]),
     AuthModule,
   ],
   controllers: [ResultsController],

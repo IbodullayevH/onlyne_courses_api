@@ -2,7 +2,6 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { CreateSubmittionDto } from './dto/create-submittion.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from 'src/auth/entities/users.entity';
 import { Assignment } from 'src/assignments/entities/assignment.entity';
 import { Submittion } from './entities/submittion.entity';
 
@@ -28,7 +27,6 @@ export class SubmittionService {
       throw new NotFoundException(`Topshiriq topilmadi`);
     }
 
-    // Yangi Submittion obyektini yaratish
     const submittion = this.submittionRepo.create({
       answer,
       userId: user.sub,

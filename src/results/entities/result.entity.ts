@@ -15,11 +15,15 @@ export class Result {
   @Column({ type: 'text', nullable: true })
   feedback: string;
 
+  
   @Column({ type: 'int', nullable: false })
   userId: number;
 
   @Column({ type: 'int', nullable: false })
   assignmentId: number;
+
+  @Column({ type: 'int', nullable: false })
+  submittionId: number;
 
   @ManyToOne(() => Assignment, (assignment) => assignment.results, { onDelete: 'CASCADE' })
   assignment: Assignment;
