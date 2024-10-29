@@ -62,14 +62,18 @@ export class AssignmentsService {
         where: { id: user.sub },
         relations: ["courses", "courses.modules"]
       });
+      
       const moduleIds = userData.courses.flatMap(course => course.modules.map(module => module.id));
-
       const assignments = await this.assignmentRepo.find({
         where: { moduleId: In(moduleIds) }
       });
+      
+      if (assignments.length === 0) {
+        throw new NotFoundException(`Hozircha siz yozilgan kursning topshiriqlari yo'q!`)
+      }
 
       return {
-        message: `Sizni ${userData.courses[0].name} - kursingizni modullaridagi topshiriqlar`,
+        message: `Sizni ${userData?.courses[0]?.name} - kursingizni modullaridagi topshiriqlar`,
         assignments: assignments
       }
 
